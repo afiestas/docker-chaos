@@ -1,0 +1,17 @@
+{
+  "name": "docker-chaos",
+  "version": "0.0.1",
+  "description": "Creates chaos in a docker-compose based system",
+  "author": "Àlex Fiestas",
+  "homepage": "http://www.afiestas.org/",
+  "main": "chaos.js",
+  "dependencies": {
+    "js-yaml": "3.3.0",
+    "nopt": "^3.0.1"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "mocha": "2.2.4",
+    "sinon": "^1.14.1"
+  }
+}

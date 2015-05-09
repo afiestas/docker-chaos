@@ -1,0 +1,14 @@
+authentication:
+  image: some-registry.com/authentication:latest
+
+proxy:
+  image: some-registry.com/proxy:latest
+
+mongodb:
+  image: mongo:2.6
+
+rabbitmq:
+  image: some-registry.com/rabbitmq:latest
+
+ldap:
+  image: some-registry.com/ldap:latest
