@@ -15,9 +15,12 @@ suite('Executor', function(){
     });
 
     suite('#exec', function(){
-        test('Should execute the script in first arg as many times as second arg', function(){
-            sut.exec("/tmp/notExistingFile", 10);
-            for(var x=0; x < 10; x++) {
+        test('If no limit is passed, execution should happen until stop is called', function(){
+            sut.exec("/tmp/notExistingFile");
+            for(var x=0; x < 15; x++) {
+                if (x == 9) {
+                    sut.stop();
+                }
                 eventEmitter.emit("close");
             }
             sinon.assert.callCount(spawn, 10);
