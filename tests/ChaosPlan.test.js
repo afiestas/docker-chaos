@@ -6,14 +6,18 @@ suite('ChaosPlan', function(){
     var sut, file, callback;
 
     setup(function(){
-        file = __dirname + '/data/chaos-plan.json';
+        file = __dirname + '/data/chaos-plan.yml';
         sut = new ChaosPlan();
     });
 
     suite('#getPlan', function(){
         test('Should return an array of POJOS describing the test plan', function(done){
             sut.getPlan(file, function(err, planData){
-                assert.deepEqual(planData, [{authentication: 2}]);
+                var expectedPlan = {plans: [
+                    {simpleFuck: [{authentication: 2}]
+                    }
+                ]};
+                assert.deepEqual(planData, expectedPlan);
                 done();
             });
         });
