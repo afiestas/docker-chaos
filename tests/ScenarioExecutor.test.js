@@ -6,11 +6,15 @@ var Docker = require('../lib/Docker');
 var ScenarioExecutor = require('../lib/ScenarioExecutor');
 
 suite('ScenarioExecutor', function(){
-    var suts, chaosPlan, scenario, containers, file, docker, callback;
+    var suts, chaosPlan, scenario, containers, file, docker, callback, clock;
+    var timeout;
 
     setup(function(){
+        clock = sinon.useFakeTimers();
+
         file = '/some/file.yaml';
         callback = sinon.spy();
+        timeout = sinon.stub();
 
         containers = [{'authentication': 0}];
         scenario = new Scenario();
@@ -19,7 +23,11 @@ suite('ScenarioExecutor', function(){
 
         docker = sinon.stub(new Docker());
 
-        sut = new ScenarioExecutor(docker);
+        sut = new ScenarioExecutor(0, docker, timeout);
+    });
+
+    teardown(function() {
+        clock.restore();
     });
 
     suite('#exec', function(){
@@ -32,6 +40,12 @@ suite('ScenarioExecutor', function(){
             docker.modify.yields(error);
             sut.exec(file, scenario, callback);
             sinon.assert.calledWith(callback, error);
+        });
+        test('Should call docker.restore after scalation has succeed', function(){
+            docker.modify.yields(null);
+            timeout.yields();
+            sut.exec(file, scenario);
+            sinon.assert.calledWith(docker.restore, file, containers, sinon.match.func);
         });
     });
 });
