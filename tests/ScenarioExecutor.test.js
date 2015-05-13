@@ -6,10 +6,11 @@ var Docker = require('../lib/Docker');
 var ScenarioExecutor = require('../lib/ScenarioExecutor');
 
 suite('ScenarioExecutor', function(){
-    var suts, chaosPlan, scenario, containers, file, docker;
+    var suts, chaosPlan, scenario, containers, file, docker, callback;
 
     setup(function(){
         file = '/some/file.yaml';
+        callback = sinon.spy();
 
         containers = [{'authentication': 0}];
         scenario = new Scenario();
@@ -25,6 +26,12 @@ suite('ScenarioExecutor', function(){
         test('Should call this.docker.modify with all containers in scenario', function(){
             sut.exec(file, scenario);
             sinon.assert.calledWith(docker.modify, file, containers, sinon.match.func);
+        });
+        test('When modification fails, exception should be forwarded to callback', function(){
+            var error = new Error('Some error');
+            docker.modify.yields(error);
+            sut.exec(file, scenario, callback);
+            sinon.assert.calledWith(callback, error);
         });
     });
 });
