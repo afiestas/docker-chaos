@@ -4,21 +4,28 @@ var Scaler = require('../lib/Scaler');
 
 suite('Scaler', function(){
     var sut, file, containers, callback;
-    var implementation;
+    var implementation, random;
 
     setup(function(){
+        random = function(){return 9;};
+
         implementation = {modify: sinon.spy()};
         containers = [{auth: 1}, {mongodb: 2}];
         file = 'some-file';
 
         callback = function(){};
-        sut = new Scaler(implementation);
+        sut = new Scaler(implementation, random);
     });
 
     suite('#scale', function(){
         test('Should forward call to implementation', function(){
             sut.scale(file, containers, callback);
             sinon.assert.calledWithExactly(implementation.modify, file, containers, callback);
+        });
+        test('Should generate a random scale unmber if ? is found', function(){
+            var containers = [{mongodb: '?'}];
+            sut.scale(file, containers, callback);
+            sinon.assert.calledWithExactly(implementation.modify, file, [{mongodb: 9}], callback);
         });
     });
     suite('#restore', function(){
