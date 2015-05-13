@@ -1,5 +1,5 @@
 name: "Example plan"
-plans:
+scenarios:
  - simpleFuck:
     containers:
         - authentication: 0
