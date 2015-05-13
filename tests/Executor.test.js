@@ -6,24 +6,28 @@ var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
 suite('Executor', function(){
-    var sut, callback, spawn;
+    var sut, callback, exec, callCounter;
 
     setup(function(){
-        spawn = sinon.stub();
-        spawn.returns(eventEmitter);
-        sut = new Executor(spawn);
+        callCounter = 0;
+        exec = function(file, callback) {
+            callCounter ++
+            if (callCounter < 10) {
+                callback();
+            }
+        };
+        sut = new Executor(exec);
     });
 
     suite('#exec', function(){
-        test('If no limit is passed, execution should happen until stop is called', function(){
+        test('Script should be executed endlessly', function(){
             sut.exec("/tmp/notExistingFile");
-            for(var x=0; x < 15; x++) {
-                if (x == 9) {
-                    sut.stop();
-                }
-                eventEmitter.emit("close");
-            }
-            sinon.assert.callCount(spawn, 10);
+            assert.equal(callCounter, 10, "Should execute recursively 10 times");
+        });
+        test('If this.stopped is true, nothing should happen', function(){
+            sut.stop();
+            sut.exec("/tmp/notExistingFile");
+            assert.equal(callCounter, 0, "Exec should not be executed if stopped is equals true");
         });
     });
 });
