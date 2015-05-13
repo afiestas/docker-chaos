@@ -21,6 +21,13 @@ suite('Scaler', function(){
             sinon.assert.calledWithExactly(implementation.modify, file, containers, callback);
         });
     });
+    suite('#restore', function(){
+        test('Should forward call to implementation setting all containers to 1', function(){
+            sut.restore(file, containers, callback);
+            var expContainers = [{auth: 1}, {mongodb: 1}];
+            sinon.assert.calledWithExactly(implementation.modify, file, expContainers, callback);
+        });
+    });
 });
 
 
