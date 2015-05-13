@@ -2,11 +2,11 @@ var sinon = require('sinon');
 var assert = require('chai').assert;
 
 var Scenario = require('../lib/Scenario');
-var Docker = require('../lib/Docker');
+var Scaler = require('../lib/Scaler');
 var ScenarioExecutor = require('../lib/ScenarioExecutor');
 
 suite('ScenarioExecutor', function(){
-    var suts, chaosPlan, scenario, containers, file, docker, callback;
+    var suts, chaosPlan, scenario, containers, file, scaler, callback;
     var timeout;
 
     setup(function(){
@@ -19,27 +19,27 @@ suite('ScenarioExecutor', function(){
         scenario.setName('Test Scenario');
         scenario.setContainers(containers);
 
-        docker = sinon.stub(new Docker());
+        scaler = sinon.stub(new Scaler());
 
-        sut = new ScenarioExecutor(0, docker, timeout);
+        sut = new ScenarioExecutor(0, scaler, timeout);
     });
 
     suite('#exec', function(){
-        test('Should call this.docker.modify with all containers in scenario', function(){
+        test('Should call this.scaler.scale with all containers in scenario', function(){
             sut.exec(file, scenario);
-            sinon.assert.calledWith(docker.modify, file, containers, sinon.match.func);
+            sinon.assert.calledWith(scaler.scale, file, containers, sinon.match.func);
         });
         test('When modification fails, exception should be forwarded to callback', function(){
             var error = new Error('Some error');
-            docker.modify.yields(error);
+            scaler.scale.yields(error);
             sut.exec(file, scenario, callback);
             sinon.assert.calledWith(callback, error);
         });
-        test('Should call docker.restore after scalation has succeed', function(){
-            docker.modify.yields(null);
+        test('Should call scaler.restore after scalation has succeed', function(){
+            scaler.scale.yields(null);
             timeout.yields();
             sut.exec(file, scenario);
-            sinon.assert.calledWith(docker.restore, file, containers, sinon.match.func);
+            sinon.assert.calledWith(scaler.restore, file, containers, sinon.match.func);
         });
     });
 });
