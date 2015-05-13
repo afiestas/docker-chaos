@@ -1,9 +1,6 @@
 var sinon = require('sinon');
 var assert = require('chai').assert;
-var Compose = require('../lib/Compose.js');
 var Executor = require('../lib/Executor.js');
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
 
 suite('Executor', function(){
     var sut, callback, exec, callCounter;
