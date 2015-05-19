@@ -11,7 +11,7 @@ suite('ComposerProcess', function(){
         byline = sinon.stub();
         byline.returns(stream);
 
-        dockerComposeProc = {stdout: 'setdout'};
+        dockerComposeProc = {stdout: 'setdout', kill: sinon.stub()};
         childProcess = {
             spawn: sinon.stub()
         };
@@ -32,6 +32,15 @@ suite('ComposerProcess', function(){
             sut.on('line', done);
             sut.start();
             stream.emit('data');
+        });
+    });
+    suite('#stop', function(){
+        setup(function() {
+            sut.proc = dockerComposeProc;
+        });
+        test('Should call this.proc.kill', function(){
+            sut.stop();
+            sinon.assert.calledWithExactly(dockerComposeProc.kill);
         });
     });
 });
