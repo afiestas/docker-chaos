@@ -7,7 +7,7 @@ suite('ComposerSplitter', function(){
 
     var component = 'authentication_1';
     var line = '[2015-05-16 14:22:20.744] [DEBUG] MongoPersistence';
-    var str = component + ' | ' + line;
+    var str = ' [32m' + component + ' | ' + line;
     setup(function(){
         sut = new ComposerSplitter();
     });
