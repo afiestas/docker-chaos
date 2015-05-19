@@ -13,7 +13,7 @@ suite('ComposerWritter', function(){
 
     setup(function(){
         fd = 1;
-        fs = {open: sinon.stub(), write: sinon.stub()};
+        fs = {open: sinon.stub(), write: sinon.stub(), close: sinon.stub()};
         splitter = sinon.stub(new ComposerSplitter());
         splitter.split.returns(lineInfo);
 
@@ -38,6 +38,17 @@ suite('ComposerWritter', function(){
             sut.fd[component] = 1;
             sut.write(line);
             sinon.assert.notCalled(fs.open);
+        });
+    });
+
+    suite('#close', function(){
+        test('Should call fs.close passing all fd in this.fd', function(){
+            sut.fd['first'] = 1;
+            sut.fd['second'] = 2;
+            sut.close();
+
+            sinon.assert.calledWith(fs.close, 1);
+            sinon.assert.calledWith(fs.close, 2);
         });
     });
 });
