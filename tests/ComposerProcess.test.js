@@ -4,14 +4,14 @@ var EventEmitter = require('events').EventEmitter;
 var ComposerProcess = require('../lib/ComposerProcess.js');
 
 suite('ComposerProcess', function(){
-    var sut, childProcess, dockerComposeProc, byline, stream;
+    var sut, childProcess, dockerComposeProc, byline, stream, buffer;
 
     setup(function(){
         stream = new EventEmitter();
         byline = sinon.stub();
         byline.returns(stream);
-
         dockerComposeProc = {stdout: 'setdout', kill: sinon.stub()};
+        buffer = new Buffer(dockerComposeProc.stdout);
         childProcess = {
             spawn: sinon.stub()
         };
@@ -29,9 +29,17 @@ suite('ComposerProcess', function(){
             sinon.assert.calledWithExactly(byline, dockerComposeProc.stdout);
         });
         test('Should emit line whenever returned stream data event is emitted', function(done){
-            sut.on('line', done);
+            sut.on('line', function(){done()});
             sut.start();
-            stream.emit('data');
+            stream.emit('data', buffer);
+        });
+        test('Should ', function(){
+            var spy = sinon.spy();
+            sut.on('line', spy);
+            sut.start();
+            stream.emit('data', buffer);
+
+            sinon.assert.calledWith(spy, dockerComposeProc.stdout);
         });
     });
     suite('#stop', function(){
