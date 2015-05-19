@@ -10,7 +10,7 @@ suite('Executor', function(){
         exec = function(file, callback) {
             callCounter ++
             if (callCounter < 10) {
-                callback();
+                callback(null);
             }
         };
         sut = new Executor(exec);
@@ -28,5 +28,3 @@ suite('Executor', function(){
         });
     });
 });
-
-
