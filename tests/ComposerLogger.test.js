@@ -11,6 +11,7 @@ suite('ComposerLogger', function(){
         line = 'some line';
         process = new ComposerProcess();
         process.start = sinon.stub();
+        process.stop = sinon.stub();
 
         writter = sinon.stub(new ComposerWritter());
 
@@ -26,6 +27,17 @@ suite('ComposerLogger', function(){
             sut.start();
             process.emit('line', line);
             sinon.assert.calledWith(writter.write, line);
+        });
+    });
+
+    suite('#stop', function(){
+        test('Should call this.process.stop', function(){
+            sut.stop();
+            sinon.assert.calledOnce(process.stop);
+        });
+        test('Should call this.writter.close', function(){
+            sut.stop();
+            sinon.assert.calledOnce(writter.close);
         });
     });
 });
