@@ -47,8 +47,8 @@ suite('ComposerWritter', function(){
 
     suite('#close', function(){
         test('Should call fs.close passing all fd in this.fd', function(){
-            sut.fd['first'] = 1;
-            sut.fd['second'] = 2;
+            sut.fd['first'] = {fd: 1};
+            sut.fd['second'] = {fd: 2};
             sut.close();
 
             sinon.assert.calledWith(fs.close, 1);
