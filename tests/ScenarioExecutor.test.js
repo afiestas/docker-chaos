@@ -41,6 +41,13 @@ suite('ScenarioExecutor', function(){
             sut.exec(file, scenario);
             sinon.assert.calledWith(scaler.restore, file, containers, sinon.match.func);
         });
+        test('Should emit beforeRestore with the scenario', function(){
+            scaler.scale.yields(null);
+            timeout.yields();
+            sut.on('beforeRestore', callback);
+            sut.exec(file, scenario);
+            sinon.assert.calledWith(callback, scenario);
+        });
     });
 });
 
