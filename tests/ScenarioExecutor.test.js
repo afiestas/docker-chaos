@@ -6,11 +6,12 @@ var Scaler = require('../lib/Scaler');
 var ScenarioExecutor = require('../lib/ScenarioExecutor');
 
 suite('ScenarioExecutor', function(){
-    var suts, chaosPlan, scenario, containers, file, scaler, callback;
+    var suts, chaosPlan, scenario, containers, file, scaler, callback, dockerLogger, logPath;
     var timeout;
 
     setup(function(){
         file = '/some/file.yaml';
+        logPath = '/logs';
         callback = sinon.spy();
         timeout = sinon.stub();
 
@@ -20,8 +21,12 @@ suite('ScenarioExecutor', function(){
         scenario.setContainers(containers);
 
         scaler = sinon.stub(new Scaler());
+        dockerLogger = {
+            saveActiveContainersLog: sinon.stub()
+        }
+        dockerLogger.saveActiveContainersLog.callsArg(1);
 
-        sut = new ScenarioExecutor(0, scaler, timeout);
+        sut = new ScenarioExecutor(logPath, 0, scaler, timeout, dockerLogger);
     });
 
     suite('#exec', function(){
