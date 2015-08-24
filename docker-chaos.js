@@ -2,9 +2,9 @@
 
 var fs = require('fs');
 var nopt = require("nopt");
-var ComposerLogger = require('./lib/ComposerLogger');
 var ChaosPlanFactory = require('./lib/ChaosPlanFactory');
 var ChaosPlanExecutor = require('./lib/ChaosPlanExecutor');
+var DockerLogger = require('./lib/DockerLogger');
 var Executor = require('./lib/Executor');
 
 var knownOpts = {
@@ -64,8 +64,8 @@ executor.on('error', function(stderr, stdout) {
     console.log(stderr, stdout);
 });
 
-var composerLogger = new ComposerLogger();
-composerLogger.start();
+var dockerLogger = new DockerLogger();
+dockerLogger.start();
 
 var chaosPlanExecutor = new ChaosPlanExecutor();
 chaosPlanExecutor.exec(dockerComposeFile, chaosPlan);
@@ -74,5 +74,5 @@ setTimeout(function() {
     console.log("Stopping execution");
     executor.stop();
     chaosPlanExecutor.stop();
-    composerLogger.stop();
+    dockerLogger.stop();
 }, during);
