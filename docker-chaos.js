@@ -48,8 +48,8 @@ console.log("In docker-compose:\n    ", dockerComposeFile);
 
 var planData = fs.readFileSync(planFile);
 
-chaosPlanFactory = new ChaosPlanFactory();
-chaosPlan = chaosPlanFactory.getChaosPlan(planData);
+var chaosPlanFactory = new ChaosPlanFactory();
+var chaosPlan = chaosPlanFactory.getChaosPlan(planData);
 
 var executor = new Executor();
 executor.exec(command);
