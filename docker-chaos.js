@@ -108,6 +108,10 @@ chaosPlanExecutor.exec(dockerComposeFile, chaosPlan);
 chaosPlanExecutor.on('dockerContainersChanged', function() {
     dockerLogger.update(function() {});
 });
+chaosPlanExecutor.on('error', function(err) {
+    console.log(err);
+    process.exit(1);
+});
 
 setTimeout(function() {
     console.log("Stopping execution");
