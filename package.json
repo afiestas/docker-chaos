@@ -8,6 +8,7 @@
   "dependencies": {
     "js-yaml": "3.3.0",
     "nopt": "^3.0.1",
+    "dockerode": "2.2.2",
     "byline": "4.2.1"
   },
   "devDependencies": {

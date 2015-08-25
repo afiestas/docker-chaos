@@ -64,8 +64,8 @@ executor.on('error', function(stderr, stdout) {
     console.log(stderr, stdout);
 });
 
-var dockerLogger = new DockerLogger();
-dockerLogger.start();
+var dockerLogger = new DockerLogger('/tmp');
+dockerLogger.start(function() {});
 
 var chaosPlanExecutor = new ChaosPlanExecutor();
 chaosPlanExecutor.exec(dockerComposeFile, chaosPlan);
@@ -75,4 +75,5 @@ setTimeout(function() {
     executor.stop();
     chaosPlanExecutor.stop();
     dockerLogger.stop();
+    process.exit(0);
 }, during);

@@ -33,14 +33,4 @@ suite('Docker', function(){
             sinon.assert.calledWithExactly(callback, null);
         });
     });
-
-    suite('#listContainers', function(){
-        test('Should execute docker-compose correctly', function(done){
-            exec.callsArgWith(1, null, 'Alex\nIs\nA\nJackAss');
-            sut.listContainers(composefile, function(err, containers) {
-                assert.deepEqual(containers, ['Alex', 'Is', 'A', 'JackAss']);
-                done();
-            });
-        });
-    });
 });

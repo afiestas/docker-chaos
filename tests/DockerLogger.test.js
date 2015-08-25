@@ -2,32 +2,68 @@ var sinon = require('sinon');
 var assert = require('chai').assert;
 var DockerLogger = require('../lib/DockerLogger');
 
-suite('DockerLogger', function(){
-    var sut, logPath;
-    var docker;
+suite('DockerLogger', function() {
+    var sut, logPath, containers, conInfo, con, stream, fsStream;
+    var docker, fs;
 
-    setup(function(){
+    setup(function() {
+        conInfo = {
+            Names: ['name'],
+            Id: 'id'
+        };
+        containers = [conInfo];
+
         docker = {
             listContainers: sinon.stub(),
-            saveLog: sinon.stub()
+            getContainer: sinon.stub()
         };
-        docker.listContainers.callsArgWith(0, null, ['abc']);
-        docker.saveLog.callsArg(2);
-        logPath = '/log';
+        docker.listContainers.callsArgWith(0, null, containers);
 
-        sut = new DockerLogger(docker);
+        con = {
+            logs: sinon.stub()
+        };
+        stream = {
+            pipe: sinon.stub()
+        };
+        con.logs.callsArgWith(1, null, stream);
+
+        docker.getContainer.returns(con);
+
+        fs = {
+            createWriteStream: sinon.stub()
+        };
+        fsStream = sinon.stub();
+        fs.createWriteStream.returns(fsStream);
+
+        logPath = '/some/path';
+        sut = new DockerLogger(logPath, docker, fs);
     });
 
-    suite('#saveActiveContainersLog', function(){
-        test('Should fetch list of containers', function(done){
-            sut.saveActiveContainersLog(logPath, function() {
+    suite('#start', function() {
+        test('Should get a list of containers', function(done) {
+            sut.start(function() {
                 sinon.assert.calledOnce(docker.listContainers);
                 done();
             });
         });
-        test('Should save the log file', function(done){
-            sut.saveActiveContainersLog(logPath, function() {
-                sinon.assert.calledWith(docker.saveLog, logPath + '/abc', 'abc');
+
+        test('Should get a container for each containerInfo', function(done) {
+            sut.start(function() {
+                sinon.assert.calledWithExactly(docker.getContainer, conInfo.Id);
+                done();
+            });
+        });
+
+        test('Should pipe container logs to a file', function(done) {
+            sut.start(function() {
+                sinon.assert.calledWithExactly(stream.pipe, fsStream);
+                done();
+            });
+        });
+
+        test('Should create a file for each container', function(done) {
+            sut.start(function() {
+                sinon.assert.calledWith(fs.createWriteStream, logPath + '/name');
                 done();
             });
         });
