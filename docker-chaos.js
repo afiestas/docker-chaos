@@ -6,6 +6,8 @@ var ChaosPlanFactory = require('./lib/ChaosPlanFactory');
 var ChaosPlanExecutor = require('./lib/ChaosPlanExecutor');
 var DockerLogger = require('./lib/DockerLogger');
 var Executor = require('./lib/Executor');
+var clc = require('cli-color');
+var Spinner = require('cli-spinner').Spinner;
 
 var knownOpts = {
     "file" : [String],
@@ -53,27 +55,44 @@ if (options.logPath) {
 }
 fs.mkdirSync(logPath);
 
-console.log("Going to execute:\n    ", command);
-console.log("While creating chaos with:\n    ", planFile);
-console.log("In docker-compose:\n    ", dockerComposeFile);
-console.log("Logs:\n    ", logPath);
+console.log(clc.whiteBright('Test:'), clc.white(command));
+console.log(clc.whiteBright('Chaos Plan:'), clc.white(planFile));
+console.log(clc.whiteBright('Docker-compose:'), clc.white(dockerComposeFile));
+console.log(clc.whiteBright('Logs:'), clc.white(logPath));
+console.log();
 
 var planData = fs.readFileSync(planFile);
 
 var chaosPlanFactory = new ChaosPlanFactory();
 var chaosPlan = chaosPlanFactory.getChaosPlan(planData);
 
+var exitCode = 0;
 var executor = new Executor();
+
+var spinner = new Spinner('Running ... ');
+
+executor.on('start', function() {
+    spinner.start();
+});
+executor.on('pass', function() {
+    console.log(clc.green("Passed"));
+    spinner.stop();
+});
+executor.on('fail', function(stdout, stderr) {
+    exitCode = 1;
+    console.log(clc.red("Failed"));
+    if (stdout.length) {
+        console.log(stdout);
+    }
+    if (stderr.length) {
+        console.log(stderr);
+    }
+    spinner.stop();
+});
 executor.exec(command);
 
-var exitCode = 0;
 process.on('beforeExit', function() {
     process.exit(exitCode);
-});
-
-executor.on('error', function(stderr, stdout) {
-    exitCode = 1;
-    console.log(stderr, stdout);
 });
 
 var dockerLogger = new DockerLogger(logPath);
@@ -90,5 +109,5 @@ setTimeout(function() {
     executor.stop();
     chaosPlanExecutor.stop();
     dockerLogger.stop();
-    process.exit(0);
+    process.exit(exitCode);
 }, during);

@@ -9,7 +9,9 @@
     "js-yaml": "3.3.0",
     "nopt": "^3.0.1",
     "dockerode": "2.2.2",
-    "byline": "4.2.1"
+    "byline": "4.2.1",
+    "cli-color": "~1.0.0",
+    "cli-spinner": "~0.2.1"
   },
   "devDependencies": {
     "chai": "^2.3.0",
