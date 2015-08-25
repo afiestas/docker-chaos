@@ -10,7 +10,7 @@ var clc = require('cli-color');
 var Spinner = require('cli-spinner').Spinner;
 
 var knownOpts = {
-    "file" : [String],
+    "composeFile" : [String],
     "plan": [String],
     "logPath": [String],
     "during": [Number]
@@ -26,10 +26,15 @@ if (!options.during) {
 }
 
 during = options.during;
-if (!options.file) {
-    options.file = process.cwd() + '/docker-compose.yml';
+if (!options.composeFile) {
+    options.composeFile = process.cwd() + '/docker-compose.yml';
 }
-dockerComposeFile = fs.realpathSync(options.file);
+try {
+    dockerComposeFile = fs.realpathSync(options.composeFile);
+} catch (err) {
+    console.log("A docker-compose.yml file could not be found");
+    process.exit(1);
+}
 
 if (!options.plan) {
     console.log("A plan file is needed so we know where to create chaos");
