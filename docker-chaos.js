@@ -13,19 +13,19 @@ var knownOpts = {
     "composeFile" : [String],
     "plan": [String],
     "logPath": [String],
-    "during": [Number]
+    "duration": [Number]
 };
 var shortHands = {};
 
 var options = nopt(knownOpts, shortHands, process.argv);
 
-var dockerComposeFile, planFile, command, during;
+var dockerComposeFile, planFile, command, duration;
 
-if (!options.during) {
-    options.during =  30000;
+if (!options.duration) {
+    options.duration =  30000;
 }
 
-during = options.during;
+duration = options.duration;
 if (!options.composeFile) {
     options.composeFile = process.cwd() + '/docker-compose.yml';
 }
@@ -128,4 +128,4 @@ setTimeout(function() {
     chaosPlanExecutor.stop();
     dockerLogger.stop();
     process.exit(exitCode);
-}, during);
+}, duration);
