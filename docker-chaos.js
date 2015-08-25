@@ -10,6 +10,7 @@ var Executor = require('./lib/Executor');
 var knownOpts = {
     "file" : [String],
     "plan": [String],
+    "logPath": [String],
     "during": [Number]
 };
 var shortHands = {};
@@ -64,7 +65,13 @@ executor.on('error', function(stderr, stdout) {
     console.log(stderr, stdout);
 });
 
-var dockerLogger = new DockerLogger('/tmp');
+var logPath = '/tmp/logs-' + (new Date().toISOString());
+if (options.logPath) {
+    logPath = options.logPath;
+}
+fs.mkdirSync(logPath);
+
+var dockerLogger = new DockerLogger(logPath);
 dockerLogger.start(function() {});
 
 var chaosPlanExecutor = new ChaosPlanExecutor();
