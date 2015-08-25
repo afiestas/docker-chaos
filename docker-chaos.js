@@ -43,13 +43,22 @@ if (!options.plan) {
 
 planFile = fs.realpathSync(options.plan);
 
-var command = fs.realpathSync(options.argv.remain[0]);
-
+//
+// Command
+//
+var command = options.argv.remain[0];
 if (!command) {
     console.log("you need to pass the command to be executed");
     process.exit(1);
 }
 
+command = command.split(' ');
+var prog = fs.realpathSync(command.shift());
+command = command.length === 1 ? prog : prog + ' ' + command.join(' ');
+
+//
+// Log Path
+//
 var logPath = '/tmp/logs-' + (new Date().toISOString());
 if (options.logPath) {
     logPath = options.logPath;
