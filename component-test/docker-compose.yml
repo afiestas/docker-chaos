@@ -1,0 +1,12 @@
+imga:
+  build: data/echoImage
+  environment:
+    - OUTPUT=A
+imgb:
+  build: data/echoImage
+  environment:
+    - OUTPUT=B
+imgc:
+  build: data/echoImage
+  environment:
+    - OUTPUT=C

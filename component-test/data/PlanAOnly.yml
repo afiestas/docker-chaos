@@ -1,0 +1,7 @@
+name: "Plan A only"
+scenarios:
+ - normalScenario:
+    containers:
+        - imga: 1
+        - imgb: 0
+        - imgc: 0

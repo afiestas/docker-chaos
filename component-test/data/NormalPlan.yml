@@ -1,0 +1,7 @@
+name: "Normal Plan"
+scenarios:
+ - normalScenario:
+    containers:
+        - imga: 1
+        - imgb: 1
+        - imgc: 1
