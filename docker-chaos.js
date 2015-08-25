@@ -76,6 +76,9 @@ dockerLogger.start(function() {});
 
 var chaosPlanExecutor = new ChaosPlanExecutor();
 chaosPlanExecutor.exec(dockerComposeFile, chaosPlan);
+chaosPlanExecutor.on('dockerContainersChanged', function() {
+    dockerLogger.update(function() {});
+});
 
 setTimeout(function() {
     console.log("Stopping execution");

@@ -15,12 +15,15 @@ suite('ChaosPlanExecutor', function() {
         chaosPlan.getScenarios.returns(scenarios);
 
         var limit = 3;
-        scenarioExecutor = {exec: sinon.spy(function(file, scenario, callback){
-            limit--;
-            if (limit > 0) {
-                callback();
-            }
-        })};
+        scenarioExecutor = {
+            exec: sinon.spy(function(file, scenario, callback) {
+                limit--;
+                if (limit > 0) {
+                    callback();
+                }
+            }),
+            on: sinon.stub()
+        };
         sut = new ChaosPlanExecutor(scenarioExecutor);
     });
 
@@ -43,5 +46,3 @@ suite('ChaosPlanExecutor', function() {
         });
     });
 });
-
-

@@ -55,21 +55,24 @@ suite('Test', function() {
             });
 		});
 
-		test.only('PlanAOnly should have only run A', function(done) {
+		test('PlanAOnly should have only run A', function(done) {
             var plan = __dirname + '/data/PlanAOnly.yml';
             var testExec = __dirname + '/sleep.sh';
             var logPath = '/tmp/test-chaos-' + (new Date().toISOString()) + '/';
             var command = '../docker-chaos.js --plan ' + plan + ' --logPath ' + logPath + ' --during 20000 ' + testExec;
 
-            console.log(command);
             var process = child_process.exec(command, function(err, stdout, stderr) {
                 if (err) {
                     done(err);
                 }
 
-                assert.isTrue(fileContains(logPath + 'componenttest_imga_1', 'A'));
-                assert.isFalse(fileContains(logPath + 'componenttest_imgb_1', 'START'));
-                assert.isFalse(fileContains(logPath + 'componenttest_imgc_1', 'START'));
+                var a = countOccurances(logPath + 'componenttest_imga_1', 'A');
+                var b = countOccurances(logPath + 'componenttest_imgb_1', 'B');
+                var c = countOccurances(logPath + 'componenttest_imgc_1', 'C');
+
+                assert.equal(a, 1);
+                assert.isTrue(b > 1);
+                assert.isTrue(c > 1);
 
                 done();
             });
@@ -91,10 +94,8 @@ suite('Test', function() {
                 assert.isTrue(fs.statSync(logPath + 'componenttest_imgc_1').isFile());
 
                 assert.isTrue(fs.statSync(logPath + 'componenttest_imga_2').isFile());
-                assert.isFalse(fs.statSync(logPath + 'componenttest_imgb_2').isFile());
-                assert.isFalse(fs.statSync(logPath + 'componenttest_imgc_2').isFile());
-
                 assert.isTrue(fileContains(logPath + 'componenttest_imga_2', 'A'));
+
                 done();
             });
 		});
