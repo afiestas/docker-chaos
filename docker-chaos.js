@@ -43,9 +43,20 @@ if (!command) {
     process.exit(1);
 }
 
+var logPath = '/tmp/logs-' + (new Date().toISOString());
+if (options.logPath) {
+    logPath = options.logPath;
+    if (fs.existsSync(logPath)){
+        console.log("Log path " + logPath + " already exists. Aborting");
+        process.exit(1);
+    }
+}
+fs.mkdirSync(logPath);
+
 console.log("Going to execute:\n    ", command);
 console.log("While creating chaos with:\n    ", planFile);
 console.log("In docker-compose:\n    ", dockerComposeFile);
+console.log("Logs:\n    ", logPath);
 
 var planData = fs.readFileSync(planFile);
 
@@ -64,12 +75,6 @@ executor.on('error', function(stderr, stdout) {
     exitCode = 1;
     console.log(stderr, stdout);
 });
-
-var logPath = '/tmp/logs-' + (new Date().toISOString());
-if (options.logPath) {
-    logPath = options.logPath;
-}
-fs.mkdirSync(logPath);
 
 var dockerLogger = new DockerLogger(logPath);
 dockerLogger.start(function() {});
